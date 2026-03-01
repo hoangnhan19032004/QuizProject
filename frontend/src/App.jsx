@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboards/AdminDashboard";
+import AdminRoute from "./components/AdminRoute";
+import UserDashboard from "./pages/Dashboards/UserDashboard";
+import UserRoute from "./components/UserRoute";
 import Register from "./pages/Register";
 
 import QuizPinPage from "./pages/QuizPinPage";
@@ -57,6 +61,24 @@ function App() {
         <Route
           path="/login"
           element={<Login toggleTheme={toggleTheme} dark={dark} />}
+        />
+        
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard dark={dark} toggleTheme={toggleTheme} />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/user/dashboard"
+          element={
+            <UserRoute>
+              <UserDashboard toggleTheme={toggleTheme} />
+            </UserRoute>
+          }
         />
 
         <Route

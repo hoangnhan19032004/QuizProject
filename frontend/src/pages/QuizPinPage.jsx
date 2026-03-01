@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { KeyRound, Loader2, User, Mail } from "lucide-react";
+import { KeyRound, Loader2, User, Mail, Home } from "lucide-react";
 
 export default function QuizPinPage() {
   const [pin, setPin] = useState("");
@@ -15,31 +15,38 @@ export default function QuizPinPage() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-
-  // ⭐ ref để auto focus
   const nameRef = useRef(null);
+
+  //--------------------------------
+  // EMAIL VALIDATE
+  //--------------------------------
+  const isValidEmail = (email) => {
+    if (!email) return true; // optional
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
   //--------------------------------
   // HANDLE JOIN
   //--------------------------------
   const handleJoinQuiz = async (e) => {
-    e.preventDefault(); // ⭐ NGĂN RELOAD
+    e.preventDefault();
 
     if (loading) return;
 
     if (!pin.trim()) {
-      setError("Vui lòng nhập mã PIN");
-      return;
+      return setError("Vui lòng nhập mã PIN");
     }
 
     if (pin.length < 4) {
-      setError("Mã PIN phải từ 4 số trở lên");
-      return;
+      return setError("Mã PIN phải từ 4 số trở lên");
     }
 
     if (!name.trim()) {
-      setError("Vui lòng nhập họ tên");
-      return;
+      return setError("Vui lòng nhập họ tên");
+    }
+
+    if (!isValidEmail(email)) {
+      return setError("Email không hợp lệ");
     }
 
     try {
@@ -68,7 +75,7 @@ export default function QuizPinPage() {
   };
 
   //--------------------------------
-  // AUTO FOCUS khi nhập đủ PIN
+  // PIN CHANGE
   //--------------------------------
   const handlePinChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
@@ -81,6 +88,21 @@ export default function QuizPinPage() {
     }
   };
 
+  //--------------------------------
+  // GO HOME WITH CONFIRM
+  //--------------------------------
+  const goHome = () => {
+    if (pin || name || email) {
+      const confirmLeave = window.confirm(
+        "Bạn đã nhập thông tin. Bạn có chắc muốn quay về trang chủ?"
+      );
+
+      if (!confirmLeave) return;
+    }
+
+    navigate("/");
+  };
+
   return (
     <div
       className="
@@ -90,6 +112,16 @@ export default function QuizPinPage() {
       dark:from-slate-900 dark:via-slate-800 dark:to-slate-900
     "
     >
+      {/* ⭐ NÚT HOME GÓC TRÊN */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={goHome}
+        className="absolute top-6 left-6"
+      >
+        <Home />
+      </Button>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -117,7 +149,6 @@ export default function QuizPinPage() {
                 </div>
               </div>
 
-              {/* ⭐ FIX chữ đen luôn */}
               <h1 className="text-3xl font-bold text-black dark:text-white">
                 Tham gia Quiz
               </h1>
@@ -127,9 +158,8 @@ export default function QuizPinPage() {
               </p>
             </div>
 
-            {/* ⭐ FORM CHUẨN ENTER */}
+            {/* FORM */}
             <form onSubmit={handleJoinQuiz} className="space-y-4">
-
               {/* PIN */}
               <Input
                 placeholder="Mã PIN"
@@ -184,7 +214,7 @@ export default function QuizPinPage() {
                 </motion.p>
               )}
 
-              {/* BUTTON */}
+              {/* JOIN BUTTON */}
               <Button
                 type="submit"
                 className="w-full text-base font-semibold h-12 rounded-xl"
@@ -198,6 +228,16 @@ export default function QuizPinPage() {
                 ) : (
                   "Bắt đầu làm bài"
                 )}
+              </Button>
+
+              {/* ⭐ NÚT HOME DƯỚI */}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 rounded-xl"
+                onClick={goHome}
+              >
+                Về trang chủ
               </Button>
             </form>
 

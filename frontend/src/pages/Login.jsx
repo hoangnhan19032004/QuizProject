@@ -19,7 +19,7 @@ export default function Login() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: email, // đổi thành email nếu backend dùng email
+          email: email,   // ✅ FIX
           password: password,
         }),
       });
@@ -31,13 +31,22 @@ export default function Login() {
         return;
       }
 
-      // nếu backend trả token
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
+      // lưu token
+      localStorage.setItem("token", data.token);
+
+      // lưu user
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       alert("Đăng nhập thành công!");
-      navigate("/dashboard");
+
+      // 🔥 Điều hướng theo role
+      if (data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (data.user.role === "user") {
+        navigate("/user/dashboard");
+      } else {
+        navigate("/");
+      }
 
     } catch (error) {
       console.error(error);
