@@ -14,12 +14,9 @@ const { authenticate, isAdmin } = require('./authMiddleware');
 
 // ROUTES
 const authRoutes = require('./routes/authRoutes');
-const staffRoutes = require('./routes/staffRoutes');
-const userRoutes = require('./routes/userRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const bookingRoutes = require('./routes/bookingRouter');
+const adminRoutes = require("./routes/admin");
+
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -77,24 +74,11 @@ const checkRoute = (route, name) => {
 
 // check tất cả
 checkRoute(authRoutes, 'authRoutes');
-checkRoute(staffRoutes, 'staffRoutes');
-checkRoute(userRoutes, 'userRoutes');
-checkRoute(cartRoutes, 'cartRoutes');
-checkRoute(productRoutes, 'productRoutes');
-checkRoute(orderRoutes, 'orderRoutes');
-checkRoute(bookingRoutes, 'bookingRoutes');
 
 
 // ✅ ROUTES
 app.use('/api/auth', authRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/staff', authenticate, staffRoutes);
-app.use('/api/users', authenticate, userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', authenticate, orderRoutes);
-app.use('/api/admin/orders', authenticate, isAdmin, orderRoutes);
-app.use('/api/bookings', bookingRoutes);
-
+app.use("/api/admin", adminRoutes);
 
 // ✅ UPLOAD AVATAR
 app.put(

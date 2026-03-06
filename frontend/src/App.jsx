@@ -3,16 +3,19 @@ import { useEffect, useState } from "react";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboards/AdminDashboard";
-import AdminRoute from "./components/AdminRoute";
-import UserDashboard from "./pages/Dashboards/UserDashboard";
-import UserRoute from "./components/UserRoute";
 import Register from "./pages/Register";
 
 import QuizPinPage from "./pages/QuizPinPage";
 import QuizPlay from "./pages/QuizPlay";
 import Result from "./pages/Result";
 
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminQuizzes from "./pages/admin/AdminQuizzes";
+import AdminQuestions from "./pages/admin/AdminQuestions";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminSettings from "./pages/admin/AdminSettings";
 function App() {
 
   // ✅ lấy theme đã lưu hoặc theo hệ thống
@@ -51,6 +54,16 @@ function App() {
 
       <Routes>
 
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="quizzes" element={<AdminQuizzes />} />
+          <Route path="questions" element={<AdminQuestions />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
         {/* HOME */}
         <Route
           path="/"
@@ -63,24 +76,7 @@ function App() {
           element={<Login toggleTheme={toggleTheme} dark={dark} />}
         />
         
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <Dashboard dark={dark} toggleTheme={toggleTheme} />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/user/dashboard"
-          element={
-            <UserRoute>
-              <UserDashboard toggleTheme={toggleTheme} />
-            </UserRoute>
-          }
-        />
-
+      {/* REGISTER */}
         <Route
           path="/register"
           element={<Register toggleTheme={toggleTheme} dark={dark} />}

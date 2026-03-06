@@ -52,6 +52,7 @@ const upload = multer({
 
 router.post('/register', async (req, res) => {
   try {
+
     let { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -77,9 +78,10 @@ router.post('/register', async (req, res) => {
       .input('email', sql.NVarChar, email)
       .input('password', sql.NVarChar, hashedPassword)
       .input('role', sql.NVarChar, 'user')
+      .input('isActive', sql.Bit, true)
       .query(`
-        INSERT INTO Users (Username, Email, PasswordHash, Role, CreatedAt)
-        VALUES (@username, @email, @password, @role, GETDATE())
+        INSERT INTO Users (Username, Email, PasswordHash, Role, IsActive, CreatedAt)
+        VALUES (@username, @email, @password, @role, @isActive, GETDATE())
       `);
 
     res.status(201).json({
@@ -125,7 +127,7 @@ router.post('/login', async (req, res) => {
     const result = await p.request()
       .input('email', sql.NVarChar, email)
       .query(`
-        SELECT Id, Email, PasswordHash, Avatar, Role
+        SELECT Id, Email, PasswordHash, Avatar, Role, IsActive
         FROM Users
         WHERE Email = @email
       `);
@@ -138,6 +140,13 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // 🔴 CHECK ACCOUNT LOCK
+    if (!user.IsActive) {
+      return res.status(403).json({
+        message: 'Tài khoản đã bị khóa. Liên hệ admin.'
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.PasswordHash);
 
     if (!isMatch) {
@@ -146,7 +155,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // 🔥 TOKEN CHỨA ROLE
+    // 🔐 CREATE TOKEN
     const token = jwt.sign(
       {
         id: user.Id,
@@ -180,7 +189,7 @@ router.post('/login', async (req, res) => {
 
 
 // =============================================
-// GET PROFILE (PROTECTED)
+// GET PROFILE
 // =============================================
 
 router.get('/profile', authenticate, async (req, res) => {
@@ -218,6 +227,7 @@ router.put(
   authenticate,
   upload.single('avatar'),
   async (req, res) => {
+
     try {
 
       if (!req.file) {
@@ -252,6 +262,7 @@ router.put(
         message: 'Server error'
       });
     }
+
   }
 );
 
